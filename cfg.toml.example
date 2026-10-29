@@ -1,0 +1,5 @@
+# Copy to cfg.toml (which git ignores) and fill in. Read at build time;
+# the environment variables WIFI_SSID and WIFI_PASS override these.
+[wifi]
+ssid = "your-network"
+password = "your-password"

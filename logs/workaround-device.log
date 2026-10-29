@@ -1,0 +1,30 @@
+[2026-10-29T23:28:14Z INFO ] 🚀 A new version of espflash is available: v4.7.0
+[2026-10-29T23:28:14Z INFO ] Serial port: '/dev/ttyACM2'
+[2026-10-29T23:28:14Z INFO ] Connecting...
+[2026-10-29T23:28:14Z INFO ] Using flash stub
+I (335) wifi:mode : sta (<mac>)
+I (2805) wifi:state: init -> auth (0xb0)
+I (2815) wifi:state: auth -> assoc (0x0)
+I (2815) wifi:state: assoc -> run (0x10)
+I (2855) wifi:connected with <ssid>, aid = 5, channel 1, BW20, bssid = xx
+I (2855) wifi:security: WPA2-PSK, phy: bgn, rssi: -63, cipher(pairwise:0x3, group:0x3), pmf:0
+I (2855) wifi:pm start, type: 1
+
+I (2855) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (2855) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (2865) wifi:<ba-add>idx:0 (ifx:0, xx:xx:xx:xx:xx:xx), tid:6, ssn:2, winSize:64
+I (2875) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (3865) esp_netif_handlers: sta ip: 192.168.178.76, mask: 255.255.255.0, gw: 192.168.178.1
+I (3865) esp_idf_svc_alpn: up: run  openssl s_client -alpn h2 -connect 192.168.178.76:443  (workaround: true)
+I (14665) wifi:<ba-add>idx:1 (ifx:0, xx:xx:xx:xx:xx:xx), tid:0, ssn:1, winSize:64
+I (14665) esp_idf_svc_alpn: connection from 192.168.178.49:55256
+I (14675) esp_idf_svc_alpn: ALPN list after init: alpn_list=0x3c0e2988 words=0x3c0d078d 0x3c0d0790 0x0 (caller's stack near 0x3fca688b); want two pointers to "h2" and "http/1.1", then null
+0x3c0e2988 - esp_idf_svc_alpn::init::PROTOCOLS
+    at ??:??
+I (14675) esp_idf_svc_alpn: ALPN list before first continue: alpn_list=0x3c0e2988 words=0x3c0d078d 0x3c0d0790 0x0 (caller's stack near 0x3fca688b); want two pointers to "h2" and "http/1.1", then null
+0x3c0e2988 - esp_idf_svc_alpn::init::PROTOCOLS
+    at ??:??
+I (15375) esp_idf_svc_alpn: ALPN list after handshake: alpn_list=0x3c0e2988 words=0x3c0d078d 0x3c0d0790 0x0 (caller's stack near 0x3fca688b); want two pointers to "h2" and "http/1.1", then null
+0x3c0e2988 - esp_idf_svc_alpn::init::PROTOCOLS
+    at ??:??
+I (15375) esp_idf_svc_alpn: RESULT: negotiated ALPN = Some("h2") (expected Some("h2"))

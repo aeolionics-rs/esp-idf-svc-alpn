@@ -1,0 +1,29 @@
+[package]
+name = "esp-idf-svc-alpn"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[features]
+default = []
+# Bypass esp-idf-svc's negotiate_server_init: call esp_tls_server_session_init with a 'static ALPN list.
+workaround = []
+# Overwrite the stack below the caller between negotiate_server_init and the first
+# negotiate_server_continue, as any real caller's later calls do. Makes the failure certain; without
+# it the dead array is usually clobbered by the handshake's own frames anyway.
+scribble = []
+
+[dependencies]
+esp-idf-svc = "=0.53.0"
+log = "0.4"
+anyhow = "1"
+
+[build-dependencies]
+embuild = { version = "0.33.5", features = ["espidf"] }
+toml = "1"
+
+[profile.release]
+opt-level = "s"
+debug = "line-tables-only"

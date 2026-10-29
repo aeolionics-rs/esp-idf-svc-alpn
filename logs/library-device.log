@@ -1,0 +1,27 @@
+[2026-10-29T23:26:24Z INFO ] 🚀 A new version of espflash is available: v4.7.0
+[2026-10-29T23:26:24Z INFO ] Serial port: '/dev/ttyACM2'
+[2026-10-29T23:26:24Z INFO ] Connecting...
+[2026-10-29T23:26:24Z INFO ] Using flash stub
+I (345) wifi:mode : sta (<mac>)
+
+I (2805) wifi:state: init -> auth (0xb0)
+I (2815) wifi:state: auth -> assoc (0x0)
+I (2825) wifi:state: assoc -> run (0x10)
+I (2855) wifi:connected with <ssid>, aid = 5, channel 1, BW20, bssid = xx
+I (2855) wifi:security: WPA2-PSK, phy: bgn, rssi: -63, cipher(pairwise:0x3, group:0x3), pmf:0
+I (2865) wifi:pm start, type: 1
+
+I (2865) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (2865) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (2865) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (2875) wifi:<ba-add>idx:0 (ifx:0, xx:xx:xx:xx:xx:xx), tid:6, ssn:2, winSize:64
+I (3875) esp_netif_handlers: sta ip: 192.168.178.76, mask: 255.255.255.0, gw: 192.168.178.1
+I (3875) esp_idf_svc_alpn: up: run  openssl s_client -alpn h2 -connect 192.168.178.76:443  (workaround: false)
+I (15565) esp_idf_svc_alpn: connection from 192.168.178.49:55314
+I (15575) esp_idf_svc_alpn: ALPN list after init: alpn_list=0x3fca6784 words=0x3fca67ac 0x3fca67af 0x0 (caller's stack near 0x3fca687b); want two pointers to "h2" and "http/1.1", then null
+I (15575) esp_idf_svc_alpn: ALPN list before first continue: alpn_list=0x3fca6784 words=0x3fc96c88 0x3cd7 0x3fca6778 (caller's stack near 0x3fca687b); want two pointers to "h2" and "http/1.1", then null
+0x3fc96c88 - __stdout
+    at ??:??
+E (15575) esp-tls-mbedtls: mbedtls_ssl_handshake returned -0x7580
+E (15575) esp_idf_svc::tls::esptls: TLS server handshake continue failed (error -30080)
+E (15585) esp_idf_svc_alpn: handshake failed: ESP_FAIL
