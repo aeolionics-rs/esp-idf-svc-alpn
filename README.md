@@ -1,5 +1,7 @@
 # esp-idf-svc 0.53.0: ALPN list dangles after `negotiate_server_init`
 
+Filed as [esp-rs/esp-idf#626](https://github.com/esp-rs/esp-idf/issues/626).
+
 A use-after-return in esp-idf-svc 0.53.0's TLS server code. `EspTls::negotiate_server_init`, and so
 `EspAsyncTls::negotiate_server`, builds the ALPN protocol list in a local, hands mbedTLS a pointer
 to it, and returns. The local is gone; mbedTLS reads it later, when the ClientHello arrives.
