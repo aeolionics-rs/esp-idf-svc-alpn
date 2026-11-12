@@ -1,0 +1,22 @@
+I (17156) esp_idf_svc_alpn: connection from 192.168.17.197:54966
+I (17156) esp_idf_svc_alpn: ALPN list after init: alpn_list=0x3fca6684 words=0x3fca66b8 0x3fca66bb 0x0 (caller's stack near 0x3fca687b); want two pointers to "h2" and "http/1.1", then null
+I (17156) esp_idf_svc_alpn: ALPN list before first continue: alpn_list=0x3fca6684 words=0xa5a5a5a5 0xa5a5a5a5 0xa5a5a5a5 (caller's stack near 0x3fca687b); want two pointers to "h2" and "http/1.1", then null
+Guru Meditation Error: Core  0 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  0 register dump:
+PC      : 0x400556b4  PS      : 0x00060030  A0      : 0x8206f462  A1      : 0x3fca66e0  
+A2      : 0x00060023  A3      : 0x0006001f  A4      : 0x000000ff  A5      : 0x0000ff00  
+A6      : 0x00ff0000  A7      : 0xff000000  A8      : 0x00000001  A9      : 0x00000006  
+A10     : 0x3fcaff14  A11     : 0x00000002  A12     : 0x00000804  A13     : 0x3fca6a79  
+A14     : 0x3fcb2700  A15     : 0x0000000c  SAR     : 0x00000018  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00060023  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffe  
+
+
+Backtrace: 0x400556b1:0x3fca66e0 0x4206f45f:0x3fca66f0 0x42070e84:0x3fca6720 0x4206e356:0x3fca6830 0x4206e391:0x3fca6850 0x42068ece:0x3fca6870 0x4206809e:0x3fca68a0 0x420054f0:0x3fca68c0 0x42003f85:0x3fca6900 0x420bb9cb:0x3fca6bc0 0x420038d0:0x3fca6be0 0x4202421c:0x3fca6c10 0x42024bff:0x3fca6c30 0x42004617:0x3fca6c70 0x4200aee1:0x3fca6ca0 0x4203d9ba:0x3fca6cc0
+
+
+
+
+ELF file SHA256: a74dd0496
+
+Rebooting...

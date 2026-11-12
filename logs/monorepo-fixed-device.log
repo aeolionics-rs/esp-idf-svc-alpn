@@ -1,0 +1,5 @@
+I (17135) esp_idf_svc_alpn: connection from 192.168.17.197:54961
+I (17145) esp_idf_svc_alpn: ALPN list after init: alpn_list=0x3fcb0894 words=0x3fcb08bc 0x3fcb08bf 0x0 (caller's stack near 0x3fca686b); want two pointers to "h2" and "http/1.1", then null
+I (17145) esp_idf_svc_alpn: ALPN list before first continue: alpn_list=0x3fcb0894 words=0x3fcb08bc 0x3fcb08bf 0x0 (caller's stack near 0x3fca686b); want two pointers to "h2" and "http/1.1", then null
+I (17925) esp_idf_svc_alpn: ALPN list after handshake: alpn_list=0x3fcb0894 words=0x3fcb08bc 0x3fcb08bf 0x0 (caller's stack near 0x3fca686b); want two pointers to "h2" and "http/1.1", then null
+I (17925) esp_idf_svc_alpn: RESULT: negotiated ALPN = Some("h2") (expected Some("h2"))

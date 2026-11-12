@@ -2,13 +2,18 @@
 
 Filed as [esp-rs/esp-idf#626](https://github.com/esp-rs/esp-idf/issues/626).
 
+**Fixed** in [esp-rs/esp-idf@a4b3564](https://github.com/esp-rs/esp-idf/commit/a4b35640f1cb17e7390d19d7cbff7f1e2307279a)
+(2026-11-12, issue closed), not yet in a crates.io release (latest 0.53.0). Verified on an
+AtomS3R: see [Results against the fix](#results-against-the-fix-atoms3r-2026-11-12-logsmonorepo-).
+
 A use-after-return in esp-idf-svc 0.53.0's TLS server code. `EspTls::negotiate_server_init`, and so
 `EspAsyncTls::negotiate_server`, builds the ALPN protocol list in a local, hands mbedTLS a pointer
 to it, and returns. The local is gone; mbedTLS reads it later, when the ClientHello arrives.
 
 Result: the handshake is rejected with `no_application_protocol` (garbage list), or a
 LoadProhibited exception in `strlen` called from `mbedtls_ssl_parse_alpn_ext` (seen in a larger
-async app on an AtomS3R). With a static list the same code negotiates `h2`.
+async app on an AtomS3R, and in this repro on an AtomS3R on 2026-11-12). With a static list the
+same code negotiates `h2`.
 
 ## Versions
 
@@ -18,7 +23,8 @@ async app on an AtomS3R). With a static list the same code negotiates `h2`.
 | esp-idf-sys | 0.38.1 |
 | ESP-IDF | v6.1 (checkout fff9895c), mbedTLS 4.1.0 |
 | Rust | `esp` toolchain, rustc 1.97.0-nightly (8ea53bcd7 2026-07-08) |
-| Board | M5Stack AtomS3 Lite (ESP32-S3FN8) |
+| Board | M5Stack AtomS3 Lite (ESP32-S3FN8); for the 2026-11-12 runs, M5Stack AtomS3R (ESP32-S3-PICO-1-N8R8, PSRAM not enabled) |
+| esp-rs/esp-idf | for the 2026-11-12 runs: 7d09109e (the fix's parent) and a4b35640 (the fix), by `[patch.crates-io]` |
 
 ## The code path
 
@@ -65,7 +71,7 @@ The ClientHello arrives after `negotiate_server_init` has returned (a non-blocki
 nothing to read yet), so the read is always after the array's death.
 
 (The client side has the same shape: `Config::try_into_raw` at line 215-217 does the same for
-`alpn_protos`. Not tried here.)
+`alpn_protos`. Not tried here; a4b3564 fixes it too.)
 
 ## Reproduce
 
@@ -94,18 +100,46 @@ the first continue, which any real caller's later calls do; makes the failure ce
 | library + scribble | words `0xa5a5a5a5 ...`; same -0x7580 | same |
 | workaround | `alpn_list=0x3c0e2988` (static data), words intact all through; `negotiated ALPN = Some("h2")` | `ALPN protocol: h2` |
 
-Not reproduced here: the LoadProhibited in `strlen`. It needs the dead stack slot to hold a
+Not reproduced on the Lite: the LoadProhibited in `strlen`. It needs the dead stack slot to hold a
 non-null, invalid pointer in `alpn_list[0]` at the moment the ClientHello is parsed. In this small
-app the handshake's own frames rewrite the slot first (to null, so no protocol matches and the
-server sends the `no_application_protocol` alert). In the larger async app (tokio, hyper, other
-handshakes in flight) it crashed. The logs show the list's words changing after
-`negotiate_server_init` returned, which is the bug; whether it ends as garbage ALPN, a rejected
-handshake or a crash depends on what the stack holds.
+app on the Lite the handshake's own frames rewrite the slot first (to null, so no protocol matches
+and the server sends the `no_application_protocol` alert). In the larger async app (tokio, hyper,
+other handshakes in flight) it crashed, and so did this app on the AtomS3R (below). The logs show
+the list's words changing after `negotiate_server_init` returned, which is the bug; whether it
+ends as garbage ALPN, a rejected handshake or a crash depends on what the stack holds.
 
 Note on inlining: `init` is `#[inline(never)]`. If the compiler inlines `negotiate_server_init`
 into a caller that stays on the stack (as it did when `init` was inlined into `serve_one`), the array
 sits in the caller's frame, is not reused, and the handshake happens to negotiate `h2`. The bug is
 then hidden, not absent.
+
+### Results against the fix (AtomS3R, 2026-11-12; `logs/monorepo-*`)
+
+The same `src/main.rs`, built against esp-rs/esp-idf (where esp-idf-svc now lives) at the fix's
+parent and at the fix, by adding to `Cargo.toml` (this rewrites `Cargo.lock`; `git checkout
+Cargo.toml Cargo.lock` goes back to 0.53.0):
+
+```toml
+[patch.crates-io]
+esp-idf-sys = { git = "https://github.com/esp-rs/esp-idf", rev = "a4b35640f1cb17e7390d19d7cbff7f1e2307279a" }
+esp-idf-hal = { git = "https://github.com/esp-rs/esp-idf", rev = "a4b35640f1cb17e7390d19d7cbff7f1e2307279a" }
+esp-idf-svc = { git = "https://github.com/esp-rs/esp-idf", rev = "a4b35640f1cb17e7390d19d7cbff7f1e2307279a" }
+```
+
+(`7d09109eb13b52d7a76198ee9fbf20f702c46c5a` in place of the rev for the parent.) Then build,
+flash and connect as above.
+
+| build | device | openssl |
+|---|---|---|
+| parent | `after init`: words intact, in the caller's stack (`alpn_list=0x3fca6684`). `before first continue`: `0x3d 0x0 0x6c`. **LoadProhibited** in ROM `strlen` called from `mbedtls_ssl_parse_alpn_ext` (`ssl_tls.c:8461`), from `ssl_parse_client_hello`, under `negotiate_server_continue` | no answer (the board rebooted); stopped after 8 s |
+| parent + scribble | `before first continue`: `0xa5a5a5a5 ...`; the same LoadProhibited, same backtrace | the same |
+| fix | `alpn_list=0x3fcb0894`, on the heap, away from the stack (`0x3fca686b`); words intact after init, before the first continue and after the handshake; `negotiated ALPN = Some("h2")` | `ALPN protocol: h2` |
+| fix + scribble | `alpn_list=0x3fcaf390`, intact all through; `Some("h2")` | `ALPN protocol: h2` |
+
+`monorepo-*-backtrace.txt` are the crashes decoded with `xtensa-esp32s3-elf-addr2line`, each against
+the ELF whose SHA-256 the device log prints. openssl exits 1 after the successful handshakes as
+well: the repro closes the socket without a close_notify ("unexpected eof"), as in the
+workaround run.
 
 ## Without hardware
 
@@ -136,6 +170,10 @@ Keep the array alive as long as the TLS session (as long as `ssl->conf`):
 - take the protocols as `&'static [&'static CStr]` / a `'static` array in `ServerConfig`
   for the non-blocking path; or
 - copy the protocols into a heap allocation owned by the session.
+
+Upstream took the last: a4b3564 copies the list into a `Box` owned by the `EspTls`
+(`SessionAlpnProtos`), dropped after `esp_tls_conn_destroy`, on the server and client paths.
+`alpn_protos` now needs the `alloc` feature (`ESP_ERR_NOT_SUPPORTED` without it).
 
 The same holds for every pointer in `esp_tls_cfg_server` that mbedTLS keeps after init (the
 certificates are parsed during `server_session_init`, so those are fine, as the doc says; the ALPN

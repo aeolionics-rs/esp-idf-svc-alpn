@@ -1,0 +1,16 @@
+strlen (ROM, 0x400556b1)
+mbedtls_ssl_parse_alpn_ext at esp-idf v6.1 components/mbedtls/mbedtls/library/ssl_tls.c:8461
+ssl_parse_client_hello at esp-idf v6.1 components/mbedtls/mbedtls/library/ssl_tls12_server.c:1294
+mbedtls_ssl_handshake_step at esp-idf v6.1 components/mbedtls/mbedtls/library/ssl_tls.c:4239
+mbedtls_ssl_handshake at esp-idf v6.1 components/mbedtls/mbedtls/library/ssl_tls.c:4286
+esp_mbedtls_server_session_continue_async at esp-idf v6.1 components/esp-tls/esp_tls_mbedtls.c:1265
+esp_tls_server_session_continue_async at esp-idf v6.1 components/esp-tls/esp_tls.c:690
+<esp_idf_svc::tls::esptls::EspTls<esp_idf_svc_alpn::Fd>>::negotiate_server_continue at esp-rs/esp-idf@7d09109/esp-idf-svc/src/tls.rs:1007
+esp_idf_svc_alpn::main at ./src/main.rs:116
+std::sys::backtrace::__rust_begin_short_backtrace::<fn() -> core::result::Result<(), anyhow::Error>, core::result::Result<(), anyhow::Error>> at rust library/core/src/ops/function.rs:250
+std::rt::lang_start::<core::result::Result<(), anyhow::Error>>::{closure#0} at rust library/std/src/rt.rs:206
+std::panicking::catch_unwind::<isize, std::rt::lang_start_internal::{closure#0}> at rust library/core/src/ops/function.rs:287
+std::rt::lang_start_internal at rust library/std/src/panic.rs:359
+main at ??:?
+app_main at esp-rs/esp-idf@7d09109/esp-idf-sys/src/start.rs:53
+main_task at esp-idf v6.1 components/freertos/app_startup.c:206

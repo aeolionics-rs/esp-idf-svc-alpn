@@ -1,4 +1,4 @@
-# Filed as esp-rs/esp-idf#626 (2026-10-30)
+# Filed as esp-rs/esp-idf#626 (2026-10-30); closed 2026-11-12, fixed in esp-rs/esp-idf@a4b3564
 
 esp-idf-svc moved into the esp-rs/esp-idf monorepo; the old esp-rs/esp-idf-svc is archived.
 Title: esp-idf-svc: TLS server's ALPN list dangles after negotiate_server_init returns (non-blocking/async handshake)
